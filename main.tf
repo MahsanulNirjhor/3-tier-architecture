@@ -10,3 +10,13 @@ resource "aws_vpc" "three-tier-vpc" {
     }
   
 }
+
+# Internet Gateway for VPC to have connectivity
+resource "aws_internet_gateway" "three-tier-igw" {
+    vpc_id = aws_vpc.three-tier-vpc.id
+
+    tags = {
+      Name = "3-Tier-Architecture-IGW"
+    }
+  
+} 
