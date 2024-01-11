@@ -54,9 +54,9 @@ resource "aws_route_table_association" "Public_RT_3" {
 resource "aws_route_table" "three-tier-app-rt" {
     vpc_id = aws_vpc.three-tier-vpc.id
 
-    route = {
+    route  {
       cidr_block = "0.0.0.0/0"
-      nat_gateway_id = aws_nat_gateway.Three_Tier_NAT.id
+      nat_gateway_id = aws_nat_gateway.App_Tier_NAT.id
     }
 
     tags = {
@@ -83,9 +83,9 @@ resource "aws_route_table_association" "Private_RT_3" {
 resource "aws_route_table" "three-tier-data-rt" {
   vpc_id = aws_vpc.three-tier-vpc.id
 
-  route = {
+  route  {
     cidr_block = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.Three_Tier_NAT.id
+    nat_gateway_id = aws_nat_gateway.DB_Tier_NAT.id
   }
 
   tags = {
@@ -107,3 +107,40 @@ resource "aws_route_table_association" "Data_RT_3" {
   route_table_id = aws_route_table.three-tier-data-rt.id
   subnet_id = module.db_subnet_3.id
 }
+
+# NAT Gateway for secured connectivity for Private subnets
+# Note that it is created in a public subnet
+
+resource "aws_nat_gateway" "App_Tier_NAT" {
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id     = module.public_subnet_1.id
+
+  tags = {
+    Name = "3-Tier-Architecture-APP-NAT"
+  }
+
+  depends_on = [ aws_internet_gateway.three-tier-igw ]
+}
+
+resource "aws_eip" "nat_eip" {
+  domain = "vpc"
+}
+
+# NAT Gateway for secured connectivity for DB subnets
+
+resource "aws_nat_gateway" "DB_Tier_NAT" {
+  allocation_id = aws_eip.nat_db_eip.id
+  subnet_id     = module.public_subnet_2.id
+
+  tags = {
+    Name = "3-Tier-Architecture-DB-NAT"
+  }
+
+  depends_on = [ aws_internet_gateway.three-tier-igw ]
+}
+
+resource "aws_eip" "nat_db_eip" {
+  domain = "vpc"
+}
+
+
