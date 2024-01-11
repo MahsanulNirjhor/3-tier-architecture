@@ -9,7 +9,7 @@ resource "aws_security_group" "three_tier_app_sg" {
     from_port       = 22
     to_port         = 22
     protocol        = "tcp"
-    security_groups = [aws_security_group.bastion_host_sg.id]
+    security_groups = [aws_security_group.three_tier_bastion_sg.id]
   }
   ingress {
     description = "HTTP from VPC"
@@ -84,8 +84,8 @@ resource "aws_security_group" "three_tier_elb_sg" {
 }
 
 # Security groups for bastion host
-resource "aws_security_group" "bastion_host_sg" {
-  name        = "Bastion_host_sg"
+resource "aws_security_group" "three_tier_bastion_sg" {
+  name        = "three_tier_bastion_sg"
   description = "Allow SSH inbound traffic"
   vpc_id      = aws_vpc.three-tier-vpc.id
 
@@ -105,6 +105,6 @@ resource "aws_security_group" "bastion_host_sg" {
   }
 
   tags = {
-    Name = "bastion_host_sg"
+    Name = "three_tier_bastion_sg"
   }
 }
