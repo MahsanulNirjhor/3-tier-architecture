@@ -25,8 +25,8 @@ resource "aws_lb_target_group" "three-tier-lb-tg" {
   target_type = "instance"
 
   stickiness {
-    enabled = true
-    type = "app_cookie"
+    enabled = false
+    type    = "app_cookie"
   }
 }
 
